@@ -1,902 +1,636 @@
+cat > /mnt/user-data/outputs/index.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Jason Yaasiel's Portfolio</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<title>Jason Yaasiel | IS Undergraduate</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
 <style>
-/* =========================
-   CSS VARIABLES — LIGHT (default)
-========================= */
 :root {
-  --ink: #0a0a0a;
-  --paper: #f5f0e8;
-  --paper2: #ede8dc;
-  --red: #c0392b;
-  --red2: #e74c3c;
-  --gold: #b8860b;
-  --muted: #6b6460;
-  --border: rgba(10,10,10,0.12);
-  --nav-bg: rgba(245,240,232,0.92);
+  --bg:    #0b0f1a;
+  --bg2:   #111827;
+  --bg3:   #1a2235;
+  --green: #00e5a0;
+  --green2:#00b87a;
+  --blue:  #3b82f6;
+  --text:  #e2e8f0;
+  --muted: #64748b;
+  --border:rgba(0,229,160,0.12);
+  --glow:  rgba(0,229,160,0.2);
 }
 
-/* =========================
-   DARK MODE — overrides only
-========================= */
-body.dark {
-  --ink: #f5f0e8;
-  --paper: #0a0a0a;
-  --paper2: #111;
-  --muted: #cfcfcf;
-  --border: rgba(255,255,255,0.12);
-  --nav-bg: rgba(10,10,10,0.92);
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:400;
+  overflow-x:hidden;
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-
-body {
-  background: var(--paper);
-  color: var(--ink);
-  font-family: 'IBM Plex Sans', sans-serif;
-  font-weight: 300;
-  overflow-x: hidden;
-  transition: background 0.3s, color 0.3s;
+/* ── TERMINAL INTRO ── */
+#boot{
+  position:fixed;inset:0;
+  background:#000;
+  z-index:99999;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:8px;
+  font-family:'Space Mono',monospace;
+  font-size:0.85rem;
+  color:#00e5a0;
+  padding:24px;
+  transition:opacity 0.7s ease;
 }
+#boot.hide{opacity:0;pointer-events:none}
+#boot-line{white-space:nowrap;overflow:hidden}
+.boot-row{display:flex;gap:12px;align-items:center;opacity:0;transform:translateY(6px);transition:opacity 0.3s,transform 0.3s}
+.boot-row.show{opacity:1;transform:none}
+.boot-row .tag{color:#64748b}
+.cursor-blink{display:inline-block;width:8px;height:1em;background:#00e5a0;animation:blink 1s step-end infinite;vertical-align:text-bottom;margin-left:2px}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 
-/* Grain texture overlay */
-body::after {
-  content: '';
-  position: fixed; inset: 0;
-  pointer-events: none;
-  z-index: 9000;
-  opacity: 0.03;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-}
-
-/* =========================
-   TERMINAL INTRO
-========================= */
-#terminalIntro {
-  position: fixed;
-  inset: 0;
-  background: #000;
-  color: #00ff88;
-  z-index: 99999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 1rem;
-  transition: opacity 0.6s ease;
-}
-#terminalIntro.hidden {
-  opacity: 0;
-  pointer-events: none;
+/* ── SCANLINE OVERLAY ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);
+  pointer-events:none;
+  z-index:5000;
 }
 
-/* =========================
-   CYBER GLOW
-========================= */
-.cyber-glow {
-  position: fixed;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, #00ff8830, transparent 70%);
-  pointer-events: none;
-  z-index: 1;
-  filter: blur(40px);
-  transform: translate(-50%, -50%);
-  transition: top 0.1s, left 0.1s;
+/* ── CURSOR GLOW ── */
+#glow{
+  position:fixed;
+  width:320px;height:320px;
+  background:radial-gradient(circle,rgba(0,229,160,0.07),transparent 70%);
+  pointer-events:none;
+  z-index:1;
+  transform:translate(-50%,-50%);
+  transition:left 0.08s,top 0.08s;
+  filter:blur(20px);
 }
 
-/* =========================
-   THEME TOGGLE
-========================= */
-.theme-toggle {
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
-  width: 48px;
-  height: 48px;
-  border: none;
-  border-radius: 50%;
-  background: var(--red);
-  color: white;
-  font-size: 20px;
-  cursor: pointer;
-  z-index: 8000;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-  transition: background 0.2s, transform 0.2s;
+/* ── THEME TOGGLE ── */
+#themeBtn{
+  position:fixed;right:16px;bottom:16px;
+  width:44px;height:44px;
+  border:1px solid var(--border);
+  border-radius:50%;
+  background:var(--bg2);
+  color:var(--green);
+  font-size:18px;
+  cursor:pointer;
+  z-index:8000;
+  transition:border-color 0.2s,box-shadow 0.2s;
 }
-.theme-toggle:hover { transform: scale(1.1); }
+#themeBtn:hover{border-color:var(--green);box-shadow:0 0 16px var(--glow)}
 
-/* NAV */
-nav {
-  position: fixed; top: 0; left: 0; right: 0;
-  z-index: 800;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 56px;
-  height: 64px;
-  background: var(--nav-bg);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  transition: background 0.3s;
-}
-.nav-logo {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: var(--ink);
-}
-.nav-logo em { color: var(--red); font-style: italic; }
-.nav-links { display: flex; gap: 32px; list-style: none; }
-.nav-links a {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--muted);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-.nav-links a:hover { color: var(--red); }
-.nav-badge {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.65rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 7px 16px;
-  background: var(--red);
-  color: #fff;
-  border-radius: 2px;
-  text-decoration: none;
-  transition: background 0.2s;
-}
-.nav-badge:hover { background: #a93226; }
 
-/* HERO */
-#home {
-  min-height: 100vh;
-  padding: 64px 0 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  position: relative;
-  overflow: hidden;
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;
+  z-index:800;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;height:60px;
+  background:rgba(11,15,26,0.85);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
 }
-.hero-left {
-  padding: 80px 56px;
-  display: flex; flex-direction: column; justify-content: center;
-  border-right: 1px solid var(--border);
-  position: relative;
+body.light nav{background:rgba(248,250,252,0.9)}
+.nav-logo{
+  font-family:'Space Mono',monospace;
+  font-size:1rem;font-weight:700;
+  color:var(--green);
+  letter-spacing:0.02em;
 }
-.hero-eyebrow {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.68rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--red);
-  margin-bottom: 24px;
-  display: flex; align-items: center; gap: 12px;
+.nav-logo span{color:var(--text)}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{
+  font-family:'Space Mono',monospace;
+  font-size:0.65rem;letter-spacing:0.15em;
+  text-transform:uppercase;color:var(--muted);
+  text-decoration:none;transition:color 0.2s;
 }
-.hero-eyebrow::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--red);
-  opacity: 0.4;
-  max-width: 60px;
+.nav-links a:hover{color:var(--green)}
+.nav-pill{
+  font-family:'Space Mono',monospace;
+  font-size:0.62rem;letter-spacing:0.1em;
+  padding:6px 14px;
+  border:1px solid var(--green);
+  color:var(--green);border-radius:100px;
+  text-decoration:none;transition:background 0.2s,box-shadow 0.2s;
 }
-h1 {
-  font-family: 'Playfair Display', serif;
-  font-weight: 900;
-  font-size: clamp(3.2rem, 5vw, 5rem);
-  line-height: 1;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-  margin-bottom: 8px;
-}
-h1 .surname {
-  display: block;
-  color: var(--red);
-  font-style: italic;
-}
-.hero-title-sub {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(1rem, 1.5vw, 1.3rem);
-  font-weight: 700;
-  font-style: italic;
-  color: var(--muted);
-  margin-bottom: 36px;
-  letter-spacing: 0.01em;
-}
-.hero-summary {
-  font-size: 0.88rem;
-  line-height: 1.85;
-  color: var(--muted);
-  max-width: 480px;
-  margin-bottom: 48px;
-}
-.hero-summary strong { color: var(--ink); font-weight: 500; }
-.hero-meta {
-  display: flex; flex-direction: column; gap: 10px;
-  margin-bottom: 44px;
-}
-.meta-row {
-  display: flex; align-items: center; gap: 12px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.72rem;
-  color: var(--muted);
-}
-.meta-row .meta-label {
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  font-size: 0.6rem;
-  color: var(--ink);
-  width: 80px;
-  flex-shrink: 0;
-}
-.hero-ctas { display: flex; gap: 14px; }
-.btn-solid {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
-  padding: 12px 28px;
-  background: var(--ink);
-  color: var(--paper);
-  text-decoration: none;
-  border-radius: 2px;
-  transition: background 0.2s;
-}
-.btn-solid:hover { background: var(--red); }
-.btn-outline {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
-  padding: 12px 28px;
-  border: 1px solid var(--ink);
-  color: var(--ink);
-  text-decoration: none;
-  border-radius: 2px;
-  transition: border-color 0.2s, color 0.2s;
-}
-.btn-outline:hover { border-color: var(--red); color: var(--red); }
+.nav-pill:hover{background:rgba(0,229,160,0.1);box-shadow:0 0 16px var(--glow)}
 
-/* Hero right */
-.hero-right {
-  display: grid;
-  grid-template-rows: 1fr 1fr;
-  background: var(--paper2);
+/* ── HERO ── */
+#home{
+  min-height:100vh;
+  padding:60px 0 0;
+  display:grid;grid-template-columns:1fr 1fr;
+  position:relative;overflow:hidden;
 }
-.hero-right-top {
-  padding: 60px 56px 40px;
-  border-bottom: 1px solid var(--border);
-  display: flex; flex-direction: column; justify-content: flex-end;
-  position: relative;
+.hero-bg-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(0,229,160,0.03) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(0,229,160,0.03) 1px,transparent 1px);
+  background-size:48px 48px;
 }
-.hero-number {
-  font-family: 'Playfair Display', serif;
-  font-size: 7rem;
-  font-weight: 900;
-  line-height: 1;
-  color: rgba(10,10,10,0.06);
-  position: absolute;
-  right: 56px; top: 40px;
+.hero-left{
+  padding:80px 48px;
+  display:flex;flex-direction:column;justify-content:center;
+  border-right:1px solid var(--border);
+  position:relative;z-index:2;
 }
-body.dark .hero-number { color: rgba(255,255,255,0.04); }
-.hero-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.63rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 6px 14px;
-  background: var(--paper);
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  color: var(--ink);
+.hero-tag{
+  font-family:'Space Mono',monospace;
+  font-size:0.65rem;letter-spacing:0.22em;
+  text-transform:uppercase;color:var(--green);
+  margin-bottom:20px;
+  display:flex;align-items:center;gap:10px;
 }
-.chip.red { background: var(--red); color: #fff; border-color: var(--red); }
-.hero-right-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.62rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 16px;
+.hero-tag::before{content:'>';color:var(--green);font-size:0.8rem}
+h1{
+  font-size:clamp(2.8rem,5vw,4.8rem);
+  font-weight:700;line-height:1.05;
+  letter-spacing:-0.03em;
+  color:var(--text);margin-bottom:6px;
 }
-.hero-right-bottom {
-  padding: 40px 56px;
-  display: flex; flex-direction: column; justify-content: center;
-  gap: 20px;
+h1 .name-green{color:var(--green)}
+h1 .name-dim{
+  display:block;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(226,232,240,0.25);
 }
-.stat-row { display: flex; gap: 40px; }
-.stat-num {
-  font-family: 'Playfair Display', serif;
-  font-size: 2.4rem;
-  font-weight: 900;
-  color: var(--ink);
-  display: block;
-  line-height: 1;
+.hero-sub{
+  font-family:'Space Mono',monospace;
+  font-size:0.78rem;color:var(--muted);
+  letter-spacing:0.1em;margin-bottom:32px;
 }
-.stat-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.6rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--muted);
-  display: block;
-  margin-top: 4px;
+.hero-sub span{color:var(--green)}
+.hero-desc{
+  font-size:0.9rem;line-height:1.8;
+  color:var(--muted);max-width:460px;margin-bottom:36px;
+}
+.hero-desc strong{color:var(--text);font-weight:500}
+.hero-info{
+  display:flex;flex-direction:column;gap:8px;
+  margin-bottom:36px;
+  font-family:'Space Mono',monospace;
+  font-size:0.7rem;
+}
+.info-row{display:flex;gap:10px;align-items:center;color:var(--muted)}
+.info-row .info-key{color:var(--green);width:90px;flex-shrink:0}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-primary{
+  font-family:'Space Mono',monospace;
+  font-size:0.7rem;letter-spacing:0.08em;
+  padding:12px 26px;
+  background:var(--green);color:#0b0f1a;
+  border-radius:4px;text-decoration:none;font-weight:700;
+  transition:box-shadow 0.2s,transform 0.15s;
+}
+.btn-primary:hover{box-shadow:0 0 24px var(--glow);transform:translateY(-1px)}
+.btn-sec{
+  font-family:'Space Mono',monospace;
+  font-size:0.7rem;letter-spacing:0.08em;
+  padding:12px 26px;
+  border:1px solid var(--border);
+  color:var(--text);border-radius:4px;
+  text-decoration:none;
+  transition:border-color 0.2s,background 0.2s;
+}
+.btn-sec:hover{border-color:var(--green);background:rgba(0,229,160,0.06)}
+
+/* Hero right panel */
+.hero-right{
+  display:flex;flex-direction:column;
+  background:var(--bg2);position:relative;z-index:2;
+}
+.hero-panel{
+  flex:1;padding:48px;
+  border-bottom:1px solid var(--border);
+  display:flex;flex-direction:column;justify-content:center;
+}
+.hero-panel:last-child{border-bottom:none}
+.panel-label{
+  font-family:'Space Mono',monospace;
+  font-size:0.6rem;letter-spacing:0.2em;
+  text-transform:uppercase;color:var(--muted);
+  margin-bottom:20px;
+}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  font-family:'Space Mono',monospace;
+  font-size:0.6rem;letter-spacing:0.1em;
+  text-transform:uppercase;
+  padding:6px 14px;
+  border:1px solid var(--border);
+  border-radius:100px;color:var(--text);
+  transition:border-color 0.2s,color 0.2s;
+}
+.chip:hover,.chip.on{border-color:var(--green);color:var(--green)}
+.stats-row{display:flex;gap:32px;flex-wrap:wrap}
+.stat-box{}
+.stat-n{
+  font-size:2.2rem;font-weight:700;
+  color:var(--green);display:block;line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.stat-l{
+  font-family:'Space Mono',monospace;
+  font-size:0.58rem;letter-spacing:0.15em;
+  text-transform:uppercase;color:var(--muted);
+  display:block;margin-top:4px;
 }
 
-/* SECTIONS */
-section {
-  padding: 100px 56px;
-  position: relative;
+/* ── SECTIONS ── */
+section{padding:96px 48px;position:relative}
+.sec-head{
+  display:flex;align-items:center;gap:16px;
+  margin-bottom:56px;
+  padding-bottom:16px;
+  border-bottom:1px solid var(--border);
 }
-.section-header {
-  display: flex; align-items: flex-end; gap: 24px;
-  margin-bottom: 64px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--border);
+.sec-num{
+  font-family:'Space Mono',monospace;
+  font-size:0.7rem;letter-spacing:0.15em;
+  color:var(--green);opacity:0.6;
 }
-.section-num {
-  font-family: 'Playfair Display', serif;
-  font-size: 4rem;
-  font-weight: 900;
-  color: rgba(10,10,10,0.07);
-  line-height: 1;
+h2{
+  font-size:clamp(1.6rem,3vw,2.4rem);
+  font-weight:700;letter-spacing:-0.02em;
+  color:var(--text);line-height:1.1;
 }
-body.dark .section-num { color: rgba(255,255,255,0.05); }
-h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(1.8rem, 3vw, 2.8rem);
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-  line-height: 1.1;
-}
-h2 em { color: var(--red); font-style: italic; }
-.section-tag {
-  margin-left: auto;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.62rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--muted);
+h2 em{color:var(--green);font-style:normal}
+.sec-tag{
+  margin-left:auto;
+  font-family:'Space Mono',monospace;
+  font-size:0.6rem;letter-spacing:0.18em;
+  text-transform:uppercase;color:var(--muted);
 }
 
-/* ABOUT */
-#about { background: var(--paper2); }
-.about-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 80px;
-  align-items: start;
+/* ── ABOUT ── */
+#about{background:var(--bg2)}
+.about-wrap{
+  display:grid;grid-template-columns:1.3fr 1fr;
+  gap:64px;align-items:start;
 }
-.about-text p {
-  font-size: 0.88rem;
-  line-height: 1.9;
-  color: var(--muted);
-  margin-bottom: 18px;
+.about-text p{
+  font-size:0.9rem;line-height:1.85;
+  color:var(--muted);margin-bottom:16px;
 }
-.about-text p strong { color: var(--ink); font-weight: 500; }
-.about-details {
-  background: var(--paper);
-  border: 1px solid var(--border);
-  padding: 32px;
+.about-text p strong{color:var(--text);font-weight:500}
+.info-card{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:8px;overflow:hidden;
 }
-.detail-title {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.62rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--red);
-  margin-bottom: 24px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border);
+.info-card-head{
+  padding:14px 20px;
+  border-bottom:1px solid var(--border);
+  font-family:'Space Mono',monospace;
+  font-size:0.6rem;letter-spacing:0.18em;
+  text-transform:uppercase;color:var(--green);
+  background:rgba(0,229,160,0.04);
 }
-.detail-row {
-  display: flex;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border);
-  gap: 16px;
+.info-row2{
+  display:flex;padding:10px 20px;
+  border-bottom:1px solid var(--border);gap:12px;
 }
-.detail-row:last-child { border-bottom: none; }
-.d-key {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.65rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted);
-  width: 110px;
-  flex-shrink: 0;
+.info-row2:last-child{border-bottom:none}
+.ik{
+  font-family:'Space Mono',monospace;
+  font-size:0.6rem;letter-spacing:0.08em;
+  text-transform:uppercase;color:var(--muted);
+  width:100px;flex-shrink:0;padding-top:1px;
 }
-.d-val { font-size: 0.82rem; color: var(--ink); font-weight: 400; }
+.iv{font-size:0.82rem;color:var(--text)}
 
-/* SKILLS */
-.skills-layout {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
+/* ── SKILLS ── */
+.skills-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  border-radius:8px;overflow:hidden;
 }
-.skill-block {
-  background: var(--paper);
-  padding: 36px 32px;
-  transition: background 0.2s;
+.skill-card{
+  background:var(--bg);
+  padding:28px 24px;
+  transition:background 0.2s;
+  position:relative;
 }
-.skill-block:hover { background: var(--paper2); }
-.skill-block-num {
-  font-family: 'Playfair Display', serif;
-  font-size: 2rem;
-  font-weight: 900;
-  color: rgba(10,10,10,0.08);
-  margin-bottom: 12px;
-  display: block;
+.skill-card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--green),var(--blue));
+  transform:scaleX(0);transform-origin:left;
+  transition:transform 0.35s ease;
 }
-body.dark .skill-block-num { color: rgba(255,255,255,0.06); }
-.skill-block-name {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--ink);
-  margin-bottom: 10px;
+.skill-card:hover::before{transform:scaleX(1)}
+.skill-card:hover{background:var(--bg2)}
+.skill-n{
+  font-family:'Space Mono',monospace;
+  font-size:0.6rem;color:var(--green);opacity:0.5;
+  margin-bottom:10px;display:block;
 }
-.skill-block-desc {
-  font-size: 0.78rem;
-  line-height: 1.7;
-  color: var(--muted);
-  margin-bottom: 16px;
+.skill-name{
+  font-size:1rem;font-weight:600;
+  color:var(--text);margin-bottom:8px;
 }
-.skill-pills { display: flex; flex-wrap: wrap; gap: 6px; }
-.pill {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.6rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 4px 10px;
-  border: 1px solid var(--border);
-  border-radius: 1px;
-  color: var(--muted);
+.skill-desc{
+  font-size:0.78rem;line-height:1.65;
+  color:var(--muted);margin-bottom:14px;
 }
-.pill.accent { border-color: var(--red); color: var(--red); }
+.pills{display:flex;flex-wrap:wrap;gap:5px}
+.pill{
+  font-family:'Space Mono',monospace;
+  font-size:0.58rem;letter-spacing:0.08em;
+  text-transform:uppercase;
+  padding:3px 9px;
+  border:1px solid var(--border);
+  border-radius:3px;color:var(--muted);
+}
+.pill.g{border-color:rgba(0,229,160,0.4);color:var(--green)}
 
-/* EDUCATION */
-#education { background: var(--paper2); }
-.edu-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
+/* ── EDUCATION ── */
+#education{background:var(--bg2)}
+.edu-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:20px;
 }
-.edu-card {
-  background: var(--paper);
-  border: 1px solid var(--border);
-  padding: 32px;
-  position: relative;
-  overflow: hidden;
-  transition: border-color 0.2s, box-shadow 0.2s;
+.edu-card{
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:8px;padding:28px;
+  position:relative;overflow:hidden;
+  transition:border-color 0.25s,box-shadow 0.25s;
 }
-.edu-card:hover {
-  border-color: var(--red);
-  box-shadow: 4px 4px 0 var(--red);
+.edu-card::after{
+  content:'';
+  position:absolute;left:0;top:0;bottom:0;
+  width:2px;background:var(--green);
+  opacity:0.5;transition:opacity 0.25s;
 }
-.edu-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0;
-  width: 3px; height: 100%;
-  background: var(--red);
+.edu-card:hover{border-color:rgba(0,229,160,0.4);box-shadow:0 0 32px rgba(0,229,160,0.06)}
+.edu-card:hover::after{opacity:1}
+.edu-yr{
+  font-family:'Space Mono',monospace;
+  font-size:0.6rem;letter-spacing:0.15em;
+  text-transform:uppercase;color:var(--green);
+  margin-bottom:10px;
 }
-.edu-year {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.62rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--red);
-  margin-bottom: 12px;
+.edu-deg{font-size:1rem;font-weight:600;color:var(--text);margin-bottom:4px;line-height:1.3}
+.edu-inst{font-size:0.78rem;color:var(--muted);margin-bottom:14px;font-style:italic}
+.edu-pts{list-style:none;display:flex;flex-direction:column;gap:5px}
+.edu-pts li{
+  font-size:0.78rem;color:var(--muted);line-height:1.5;
+  padding-left:14px;position:relative;
 }
-.edu-degree {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--ink);
-  margin-bottom: 6px;
-  line-height: 1.3;
-}
-.edu-institution {
-  font-size: 0.78rem;
-  color: var(--muted);
-  margin-bottom: 16px;
-  font-style: italic;
-}
-.edu-points { list-style: none; display: flex; flex-direction: column; gap: 6px; }
-.edu-points li {
-  font-size: 0.78rem;
-  color: var(--muted);
-  line-height: 1.5;
-  padding-left: 14px;
-  position: relative;
-}
-.edu-points li::before {
-  content: '—';
-  position: absolute; left: 0;
-  color: var(--red);
-  font-size: 0.7rem;
-}
+.edu-pts li::before{content:'›';position:absolute;left:0;color:var(--green)}
 
-/* GRADES */
-.grades-strip {
-  margin-top: 32px;
-  background: #0a0a0a;
-  padding: 28px 32px;
-  display: flex; flex-wrap: wrap; gap: 0;
+/* Grades */
+.grades-label{
+  font-family:'Space Mono',monospace;
+  font-size:0.6rem;letter-spacing:0.18em;
+  text-transform:uppercase;color:var(--muted);
+  margin:36px 0 12px;
 }
-.grade-item {
-  flex: 0 0 25%;
-  padding: 12px 16px;
-  border-right: 1px solid rgba(255,255,255,0.08);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+.grades-grid{
+  background:#0b0f1a;
+  border:1px solid rgba(0,229,160,0.08);
+  border-radius:8px;overflow:hidden;
+  display:grid;grid-template-columns:repeat(4,1fr);
 }
-.grade-item:nth-child(4n) { border-right: none; }
-.grade-subject {
-  font-size: 0.72rem;
-  color: rgba(255,255,255,0.5);
-  margin-bottom: 4px;
-  font-family: 'IBM Plex Mono', monospace;
-  letter-spacing: 0.05em;
+body.light .grades-grid{background:#0f172a}
+.grade-cell{
+  padding:16px;
+  border-right:1px solid rgba(255,255,255,0.05);
+  border-bottom:1px solid rgba(255,255,255,0.05);
 }
-.grade-mark {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.4rem;
-  font-weight: 900;
-  color: #fff;
-}
-.grade-mark.a { color: #e8d5a3; }
-.grade-mark.b { color: #94a3b8; }
-.grade-mark.c { color: rgba(255,255,255,0.4); }
+.grade-cell:nth-child(4n){border-right:none}
+.grade-cell:nth-last-child(-n+1){border-bottom:none}
+.g-sub{font-family:'Space Mono',monospace;font-size:0.6rem;color:rgba(255,255,255,0.35);margin-bottom:6px}
+.g-mark{font-size:1.4rem;font-weight:700}
+.g-mark.a{color:#86efac}
+.g-mark.b{color:#93c5fd}
+.g-mark.c{color:rgba(255,255,255,0.25)}
 
-/* EXPERIENCE */
-.exp-timeline { max-width: 820px; }
-.exp-item {
-  display: grid;
-  grid-template-columns: 180px 1fr;
-  gap: 40px;
-  padding: 40px 0;
-  border-bottom: 1px solid var(--border);
+/* ── EXPERIENCE ── */
+.exp-list-wrap{max-width:780px}
+.exp-item{
+  display:grid;grid-template-columns:160px 1fr;gap:32px;
+  padding:32px 0;border-bottom:1px solid var(--border);
 }
-.exp-item:last-child { border-bottom: none; }
-.exp-date-col {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  color: var(--red);
-  padding-top: 4px;
+.exp-item:last-child{border-bottom:none}
+.exp-date{
+  font-family:'Space Mono',monospace;
+  font-size:0.65rem;letter-spacing:0.1em;
+  color:var(--green);padding-top:3px;line-height:1.5;
 }
-.exp-role {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--ink);
-  margin-bottom: 4px;
+.exp-role{font-size:1.05rem;font-weight:600;color:var(--text);margin-bottom:2px}
+.exp-org{font-size:0.78rem;color:var(--muted);margin-bottom:12px;font-style:italic}
+.exp-pts{list-style:none;display:flex;flex-direction:column;gap:6px}
+.exp-pts li{
+  font-size:0.82rem;color:var(--muted);line-height:1.6;
+  padding-left:18px;position:relative;
 }
-.exp-org {
-  font-size: 0.8rem;
-  color: var(--muted);
-  font-style: italic;
-  margin-bottom: 16px;
-}
-.exp-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-.exp-list li {
-  font-size: 0.82rem;
-  color: var(--muted);
-  line-height: 1.6;
-  padding-left: 20px;
-  position: relative;
-}
-.exp-list li::before {
-  content: '▸';
-  position: absolute; left: 0;
-  color: var(--red);
-  font-size: 0.65rem;
-  top: 3px;
-}
+.exp-pts li::before{content:'▸';position:absolute;left:0;color:var(--green);font-size:0.6rem;top:4px}
 
-/* PROJECTS */
-#projects { background: var(--paper2); }
-.project-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
+/* ── PROJECTS ── */
+#projects{background:var(--bg2)}
+.proj-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:20px;
 }
-.project-card {
-  padding: 40px;
-  background: var(--paper);
-  border: 1px solid var(--border);
-  color: var(--ink);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.2s;
-  transform-style: preserve-3d;
+.proj-card{
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:8px;padding:28px;
+  color:var(--text);
+  transition:border-color 0.25s,transform 0.2s,box-shadow 0.25s;
 }
-.project-card:hover {
-  transform: rotateY(4deg) rotateX(4deg) scale(1.02);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-  border-color: var(--red);
+.proj-card:hover{
+  border-color:rgba(0,229,160,0.35);
+  transform:translateY(-4px);
+  box-shadow:0 12px 40px rgba(0,0,0,0.3);
 }
-.project-card h3 {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--ink);
-  margin-bottom: 12px;
+.proj-card h3{font-size:1rem;font-weight:600;color:var(--text);margin-bottom:8px}
+.proj-card p{font-size:0.8rem;line-height:1.65;color:var(--muted)}
+.proj-tag{
+  display:inline-block;margin-top:14px;
+  font-family:'Space Mono',monospace;
+  font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;
+  padding:3px 10px;border:1px solid rgba(0,229,160,0.35);
+  color:var(--green);border-radius:3px;
 }
-.project-card p {
-  font-size: 0.82rem;
-  line-height: 1.7;
-  color: var(--muted);
+.proj-placeholder{
+  opacity:0.4;border-style:dashed;
 }
-.project-tag {
-  display: inline-block;
-  margin-top: 16px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.6rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 4px 10px;
-  border: 1px solid var(--red);
-  color: var(--red);
-  border-radius: 1px;
-}
+.proj-placeholder h3,.proj-placeholder p{color:var(--muted)}
 
-/* CONTACT */
-#contact { background: #0a0a0a; }
-#contact .section-header { border-bottom-color: rgba(255,255,255,0.1); }
-#contact .section-num { color: rgba(255,255,255,0.04); }
-#contact h2 { color: #fff; }
-#contact h2 em { color: #e8a0a0; }
-#contact .section-tag { color: rgba(255,255,255,0.3); }
+/* ── CONTACT ── */
+#contact{background:#0b0f1a}
+body.light #contact{background:#0f172a}
+#contact .sec-head{border-bottom-color:rgba(255,255,255,0.08)}
+#contact .sec-num{color:rgba(0,229,160,0.4)}
+#contact h2,#contact h2 em{color:#e2e8f0}
+#contact h2 em{color:#6ee7b7}
+#contact .sec-tag{color:rgba(255,255,255,0.25)}
 
-.contact-layout {
-  display: grid;
-  grid-template-columns: 1fr;
-  max-width: 600px;
-  gap: 0;
+.contact-wrap{max-width:560px}
+.contact-intro{
+  font-size:0.88rem;line-height:1.8;
+  color:rgba(255,255,255,0.4);margin-bottom:32px;
 }
-.contact-intro p {
-  font-size: 0.86rem;
-  line-height: 1.85;
-  color: rgba(255,255,255,0.45);
-  margin-bottom: 40px;
+.c-links{display:flex;flex-direction:column;gap:12px}
+.c-item{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 18px;
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:6px;
+  text-decoration:none;
+  transition:border-color 0.2s,background 0.2s;
 }
-.contact-links { display: flex; flex-direction: column; gap: 16px; }
-.c-link {
-  display: flex; align-items: center; gap: 16px;
-  padding: 16px 20px;
-  border: 1px solid rgba(255,255,255,0.08);
-  text-decoration: none;
-  transition: border-color 0.2s, background 0.2s;
+.c-item:hover{border-color:rgba(0,229,160,0.35);background:rgba(0,229,160,0.05)}
+.c-icon{
+  width:34px;height:34px;flex-shrink:0;
+  background:rgba(255,255,255,0.05);
+  border-radius:5px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.9rem;
 }
-.c-link:hover {
-  border-color: var(--red2);
-  background: rgba(192,57,43,0.08);
+.c-lbl{
+  font-family:'Space Mono',monospace;font-size:0.58rem;
+  letter-spacing:0.15em;text-transform:uppercase;
+  color:rgba(255,255,255,0.25);display:block;margin-bottom:1px;
 }
-.c-link-icon {
-  font-size: 1rem;
-  width: 36px; height: 36px;
-  background: rgba(255,255,255,0.06);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  border-radius: 1px;
-}
-.c-link-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.6rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.3);
-  display: block;
-  margin-bottom: 2px;
-}
-.c-link-val { font-size: 0.82rem; color: rgba(255,255,255,0.7); }
+.c-val{font-size:0.82rem;color:rgba(255,255,255,0.65)}
 
-.contact-form { display: flex; flex-direction: column; gap: 18px; }
-.cf-group { display: flex; flex-direction: column; gap: 6px; }
-.cf-group label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.6rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.3);
+/* ── FOOTER ── */
+footer{
+  padding:20px 48px;
+  background:#0b0f1a;
+  border-top:1px solid rgba(255,255,255,0.06);
+  display:flex;align-items:center;justify-content:space-between;
+  font-family:'Space Mono',monospace;
+  font-size:0.6rem;letter-spacing:0.08em;
+  color:rgba(255,255,255,0.2);
 }
-.cf-group input,
-.cf-group textarea {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.1);
-  padding: 14px 18px;
-  color: #fff;
-  font-family: 'IBM Plex Sans', sans-serif;
-  font-size: 0.85rem;
-  outline: none;
-  border-radius: 1px;
-  transition: border-color 0.2s;
-  resize: none;
-}
-.cf-group input:focus,
-.cf-group textarea:focus { border-color: var(--red2); }
-.cf-group input::placeholder,
-.cf-group textarea::placeholder { color: rgba(255,255,255,0.2); }
-.cf-group textarea { height: 130px; }
-.cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-.cf-submit {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  padding: 16px;
-  background: var(--red);
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s;
-  border-radius: 1px;
-}
-.cf-submit:hover { background: #a93226; }
+body.light footer{background:#0f172a}
+.f-brand{color:var(--green);font-weight:700;font-size:0.8rem}
 
-/* FOOTER */
-footer {
-  padding: 24px 56px;
-  background: #0a0a0a;
-  border-top: 1px solid rgba(255,255,255,0.06);
-  display: flex; align-items: center; justify-content: space-between;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.65rem;
-  letter-spacing: 0.1em;
-  color: rgba(255,255,255,0.25);
-}
-.f-logo {
-  font-family: 'Playfair Display', serif;
-  font-size: 1rem;
-  font-weight: 700;
-  color: rgba(255,255,255,0.6);
-}
-.f-logo em { color: var(--red2); font-style: italic; }
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity 0.6s ease,transform 0.6s ease}
+.reveal.in{opacity:1;transform:none}
 
-/* Scroll animations */
-.reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.65s ease, transform 0.65s ease;
-}
-.reveal.in { opacity: 1; transform: none; }
+/* ─────────────────────────────
+   RESPONSIVE — TABLET ≤ 900px
+───────────────────────────── */
+@media(max-width:900px){
+  nav{padding:0 20px}
+  .nav-links{display:none}
+  .nav-pill{font-size:0.58rem;padding:5px 12px}
 
-/* =========================
-   RESPONSIVE — TABLET (≤960px)
-========================= */
-@media (max-width: 960px) {
-  nav { padding: 0 20px; }
-  .nav-links { display: none; }
-  .nav-badge { font-size: 0.58rem; padding: 6px 12px; }
+  #home{grid-template-columns:1fr}
+  .hero-left{padding:76px 20px 52px;border-right:none}
+  .hero-right{display:none}
 
-  #home { grid-template-columns: 1fr; }
-  .hero-left { padding: 80px 24px 60px; border-right: none; }
-  .hero-right { display: none; }
+  section{padding:64px 20px}
+  .sec-head{flex-wrap:wrap;gap:10px;margin-bottom:36px}
+  .sec-tag{margin-left:0;width:100%}
 
-  section { padding: 72px 24px; }
+  .about-wrap{grid-template-columns:1fr;gap:32px}
+  .skills-grid{grid-template-columns:1fr 1fr}
+  .edu-grid{grid-template-columns:1fr;gap:16px}
+  .exp-item{grid-template-columns:1fr;gap:6px}
+  .grades-grid{grid-template-columns:repeat(3,1fr)}
 
-  .about-grid { grid-template-columns: 1fr; gap: 40px; }
-  .skills-layout { grid-template-columns: 1fr 1fr; }
-  .edu-grid { grid-template-columns: 1fr; gap: 20px; }
-  .exp-item { grid-template-columns: 1fr; gap: 8px; }
-  .contact-layout { grid-template-columns: 1fr; gap: 48px; }
-  .cf-row { grid-template-columns: 1fr; }
-
-  .grade-item { flex: 0 0 50%; }
-  .grade-item:nth-child(4n) { border-right: 1px solid rgba(255,255,255,0.08); }
-  .grade-item:nth-child(2n) { border-right: none; }
-
-  footer { flex-direction: column; gap: 10px; text-align: center; padding: 20px; }
+  footer{flex-direction:column;gap:8px;text-align:center;padding:16px}
 }
 
-/* =========================
-   RESPONSIVE — MOBILE (≤600px)
-========================= */
-@media (max-width: 600px) {
-  /* Nav */
-  nav { padding: 0 16px; height: 56px; }
-  .nav-badge { display: none; }
+/* ─────────────────────────────
+   RESPONSIVE — MOBILE ≤ 560px
+───────────────────────────── */
+@media(max-width:560px){
+  nav{padding:0 14px;height:54px}
+  .nav-pill{display:none}
 
-  /* Hero */
-  .hero-left { padding: 76px 16px 48px; }
-  h1 { font-size: 2.6rem; }
-  .hero-title-sub { font-size: 0.9rem; }
-  .hero-summary { font-size: 0.84rem; margin-bottom: 28px; }
-  .hero-meta { margin-bottom: 28px; gap: 8px; }
-  .meta-row { font-size: 0.68rem; }
-  .hero-ctas { flex-direction: column; gap: 10px; }
-  .btn-solid, .btn-outline { text-align: center; padding: 13px 20px; font-size: 0.7rem; }
+  .hero-left{padding:70px 14px 44px}
+  h1{font-size:2.4rem}
+  .hero-sub{font-size:0.68rem}
+  .hero-desc{font-size:0.84rem;margin-bottom:24px}
+  .hero-info{font-size:0.65rem;margin-bottom:24px}
+  .info-row .info-key{width:76px}
+  .hero-btns{flex-direction:column;gap:10px}
+  .btn-primary,.btn-sec{text-align:center;padding:12px 20px;font-size:0.68rem}
 
-  /* Sections */
-  section { padding: 56px 16px; }
-  .section-header { gap: 12px; margin-bottom: 36px; flex-wrap: wrap; }
-  .section-num { font-size: 2.4rem; }
-  h2 { font-size: 1.6rem; }
-  .section-tag { margin-left: 0; width: 100%; }
+  section{padding:48px 14px}
+  h2{font-size:1.5rem}
+  .sec-num{font-size:0.62rem}
 
-  /* About */
-  .about-grid { gap: 28px; }
-  .about-text p { font-size: 0.84rem; }
-  .about-details { padding: 20px; }
-  .d-key { width: 90px; font-size: 0.6rem; }
-  .d-val { font-size: 0.78rem; }
+  .about-text p{font-size:0.84rem}
+  .info-card-head{font-size:0.58rem;padding:12px 16px}
+  .info-row2{padding:9px 16px}
+  .ik{width:84px;font-size:0.58rem}
+  .iv{font-size:0.78rem}
 
-  /* Skills */
-  .skills-layout { grid-template-columns: 1fr; }
-  .skill-block { padding: 24px 20px; }
-  .skill-block-num { font-size: 1.4rem; }
-  .skill-block-name { font-size: 1rem; }
-  .skill-block-desc { font-size: 0.76rem; }
+  .skills-grid{grid-template-columns:1fr}
+  .skill-card{padding:22px 18px}
+  .skill-name{font-size:0.95rem}
+  .skill-desc{font-size:0.75rem}
 
-  /* Education */
-  .edu-grid { grid-template-columns: 1fr; gap: 16px; }
-  .edu-card { padding: 20px 20px 20px 24px; }
-  .edu-degree { font-size: 1rem; }
-  .edu-institution { font-size: 0.74rem; }
-  .edu-points li { font-size: 0.74rem; }
+  .edu-grid{gap:12px}
+  .edu-card{padding:20px 20px 20px 22px}
+  .edu-deg{font-size:0.95rem}
 
-  /* Grades */
-  .grades-strip { padding: 16px; }
-  .grade-item { flex: 0 0 50%; padding: 10px 12px; }
-  .grade-item:nth-child(4n) { border-right: 1px solid rgba(255,255,255,0.08); }
-  .grade-item:nth-child(2n) { border-right: none; }
-  .grade-subject { font-size: 0.65rem; }
-  .grade-mark { font-size: 1.2rem; }
+  .grades-grid{grid-template-columns:repeat(3,1fr)}
+  .grade-cell{padding:12px 10px}
+  .g-sub{font-size:0.55rem}
+  .g-mark{font-size:1.1rem}
 
-  /* Experience */
-  .exp-timeline { max-width: 100%; }
-  .exp-item { grid-template-columns: 1fr; gap: 6px; padding: 28px 0; }
-  .exp-date-col { font-size: 0.65rem; }
-  .exp-role { font-size: 1rem; }
-  .exp-org { font-size: 0.75rem; margin-bottom: 10px; }
-  .exp-list li { font-size: 0.78rem; }
+  .exp-list-wrap{max-width:100%}
+  .exp-item{gap:4px;padding:24px 0}
+  .exp-role{font-size:0.95rem}
+  .exp-org{font-size:0.74rem}
+  .exp-pts li{font-size:0.78rem}
 
-  /* Projects */
-  .project-grid { grid-template-columns: 1fr; gap: 16px; }
-  .project-card { padding: 24px 20px; }
-  .project-card h3 { font-size: 1rem; }
-  .project-card p { font-size: 0.78rem; }
+  .proj-grid{grid-template-columns:1fr;gap:14px}
+  .proj-card{padding:22px 18px}
+  .proj-card h3{font-size:0.95rem}
+  .proj-card p{font-size:0.78rem}
 
-  /* Contact */
-  .contact-layout { gap: 36px; }
-  .contact-intro p { font-size: 0.82rem; }
-  .c-link { padding: 12px 14px; gap: 12px; }
-  .c-link-val { font-size: 0.76rem; word-break: break-all; }
-  .cf-row { grid-template-columns: 1fr; }
-  .cf-group input, .cf-group textarea { font-size: 0.82rem; padding: 12px 14px; }
-  .cf-submit { font-size: 0.7rem; padding: 14px; }
+  .contact-intro{font-size:0.84rem}
+  .c-item{padding:12px 14px;gap:10px}
+  .c-val{font-size:0.78rem;word-break:break-all}
 
-  /* Footer */
-  footer { padding: 16px; gap: 8px; font-size: 0.6rem; }
-  .f-logo { font-size: 0.9rem; }
-
-  /* Theme toggle — move up slightly so it doesn't overlap footer */
-  .theme-toggle { right: 14px; bottom: 14px; width: 42px; height: 42px; font-size: 17px; }
+  #themeBtn{right:12px;bottom:12px;width:40px;height:40px;font-size:16px}
+  footer{font-size:0.56rem;padding:14px}
 }
 </style>
 </head>
 <body>
 
-<!-- Terminal intro (in <body>, before everything else) -->
-<div id="terminalIntro">Initializing Jason's Portfolio ...</div>
+<!-- Boot screen -->
+<div id="boot">
+  <div class="boot-row" id="b1"><span class="tag">$</span> loading portfolio</div>
+  <div class="boot-row" id="b2"><span class="tag">✓</span> modules loaded</div>
+  <div class="boot-row" id="b3"><span class="tag">✓</span> jason_yaasiel.init()<span class="cursor-blink"></span></div>
+</div>
 
-<!-- Cyber glow follows cursor -->
-<div class="cyber-glow" id="glow"></div>
+<!-- Cursor glow -->
+<div id="glow"></div>
 
-<!-- Dark/light toggle -->
-<button class="theme-toggle" id="themeBtn" title="Toggle dark mode">🌙</button>
+<!-- Theme toggle -->
+<button id="themeBtn" title="Toggle theme">☀️</button>
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">Jason <em>Yaasiel</em></div>
+  <div class="nav-logo">&gt; <span>Jason</span>Yaasiel</div>
   <ul class="nav-links">
     <li><a href="#home">Home</a></li>
     <li><a href="#about">About</a></li>
@@ -906,336 +640,324 @@ footer {
     <li><a href="#projects">Projects</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-  <a href="mailto:jasonyaasielofficial@gmail.com" class="nav-badge">Available for opportunities</a>
+  <a href="mailto:jasonyaasielofficial@gmail.com" class="nav-pill">Open to opportunities</a>
 </nav>
 
-<!-- HERO -->
+<!-- ── HERO ── -->
 <section id="home">
+  <div class="hero-bg-grid"></div>
   <div class="hero-left">
-    <div class="hero-eyebrow">Information Systems Undergraduate</div>
+    <div class="hero-tag">Information Systems Undergraduate</div>
     <h1>
       Jason
-      <span class="surname">Yaasiel.</span>
+      <span class="name-green"> Yaasiel</span>
+      <span class="name-dim">//Information Systems</span>
     </h1>
-    <div class="hero-title-sub">Programmer · Cybersecurity Enthusiast · Leader</div>
-    <p class="hero-summary">
-      Motivated undergraduate at <strong>Sabaragamuwa University of Sri Lanka</strong> with a passion for
-      <strong>programming, databases, and cybersecurity</strong>. I combine technical rigour
-      with the leadership skills developed through years of community service and school administration.
-    </p>
-    <div class="hero-meta">
-      <div class="meta-row"><span class="meta-label">Location</span>Batticaloa, Sri Lanka</div>
-      <div class="meta-row"><span class="meta-label">Degree</span>B.Sc. (Hons) Information Systems — SUSL</div>
-      <div class="meta-row"><span class="meta-label">Email</span>jasonyaasielofficial@gmail.com</div>
+    <div class="hero-sub">
+      <span>Programmer</span> · <span>Cybersecurity</span> · <span>Leader</span>
     </div>
-    <div class="hero-ctas">
-      <a href="#contact" class="btn-solid">Get in Touch</a>
-      <a href="#education" class="btn-outline">View Qualifications →</a>
+    <p class="hero-desc">
+      Undergraduate at <strong>Sabaragamuwa University of Sri Lanka</strong>, passionate about
+      <strong>cybersecurity, networking, and building real-world solutions</strong>. I bring both
+      technical skills and leadership developed through community service.
+    </p>
+    <div class="hero-info">
+      <div class="info-row"><span class="info-key">location</span>Batticaloa, Sri Lanka</div>
+      <div class="info-row"><span class="info-key">degree</span>B.Sc. (Hons) Information Systems — SUSL</div>
+      <div class="info-row"><span class="info-key">email</span>jasonyaasielofficial@gmail.com</div>
+    </div>
+    <div class="hero-btns">
+      <a href="#contact" class="btn-primary">Get in Touch</a>
+      <a href="#education" class="btn-sec">View Qualifications →</a>
     </div>
   </div>
   <div class="hero-right">
-    <div class="hero-right-top">
-      <div class="hero-number">01</div>
-      <div class="hero-right-label">Core Interests</div>
-      <div class="hero-chips">
-        <span class="chip red">Cybersecurity</span>
-        <span class="chip red">Networking</span>
+    <div class="hero-panel">
+      <div class="panel-label">// Core Interests</div>
+      <div class="chips">
+        <span class="chip on">Cybersecurity</span>
+        <span class="chip on">Networking</span>
+        <span class="chip on">Information Systems</span>
         <span class="chip">Databases</span>
         <span class="chip">Programming</span>
-        <span class="chip">Information Systems</span>
         <span class="chip">Community Service</span>
       </div>
     </div>
-    <div class="hero-right-bottom">
-      <div class="hero-right-label">At a Glance</div>
-      <div class="stat-row">
-        <div class="stat">
-          <span class="stat-num">2</span>
-          <span class="stat-label">Certifications</span>
+    <div class="hero-panel">
+      <div class="panel-label">// At a Glance</div>
+      <div class="stats-row">
+        <div class="stat-box">
+          <span class="stat-n">2</span>
+          <span class="stat-l">Certifications</span>
         </div>
-        <div class="stat">
-          <span class="stat-num">127</span>
-          <span class="stat-label">District Rank (A/L)</span>
+        <div class="stat-box">
+          <span class="stat-n">127</span>
+          <span class="stat-l">District Rank A/L</span>
         </div>
-        <div class="stat">
-          <span class="stat-num">1.26</span>
-          <span class="stat-label">Z-Score</span>
+        <div class="stat-box">
+          <span class="stat-n">1.26</span>
+          <span class="stat-l">Z-Score</span>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ABOUT -->
+<!-- ── ABOUT ── -->
 <section id="about">
-  <div class="section-header reveal">
-    <div class="section-num">01</div>
+  <div class="sec-head reveal">
+    <span class="sec-num">01</span>
     <h2>About <em>Me</em></h2>
-    <span class="section-tag">// Profile</span>
+    <span class="sec-tag">// profile</span>
   </div>
-  <div class="about-grid">
+  <div class="about-wrap">
     <div class="about-text reveal">
-      <p>I'm <strong>Jason Yaasiel</strong>, an Information Systems undergraduate at Sabaragamuwa University of Sri Lanka (SUSL), Academic Year 2024/25. I'm driven by a deep curiosity for how technology can solve real-world problems — particularly in the areas of <strong>cybersecurity, databases, and software systems</strong>.</p>
-      <p>My technical foundations are backed by completed courses in <strong>Cybersecurity</strong> and <strong>Computer Networking</strong>, and I'm continuously expanding my programming and systems knowledge through my university studies.</p>
-      <p>Beyond code, I believe in building character through service. As a <strong>School Prefect</strong> at St. Michael's College and an active member of the <strong>Lions Club</strong>, I've developed communication, teamwork, and leadership skills that I carry into every technical project I take on.</p>
+      <p>I'm <strong>Jason Yaasiel</strong>, an Information Systems undergraduate at Sabaragamuwa University of Sri Lanka (SUSL), Academic Year 2024/25. I'm driven by a curiosity for how technology solves real-world problems — especially in <strong>cybersecurity, databases, and software systems</strong>.</p>
+      <p>My technical foundation includes completed certifications in <strong>Cybersecurity</strong> and <strong>Computer Networking</strong> from IVTC Campus. I'm continuously growing my programming and systems knowledge through university studies.</p>
+      <p>Beyond tech, I value leadership and service. As a <strong>School Prefect</strong> at St. Michael's College and a member of the <strong>Lions Club of Batticaloa Supreme</strong>, I've built communication and teamwork skills I carry into every project.</p>
     </div>
-    <div class="about-details reveal">
-      <div class="detail-title">Personal Details</div>
-      <div class="detail-row"><span class="d-key">Full Name</span><span class="d-val">Kavalan Jason Yaasiel</span></div>
-      <div class="detail-row"><span class="d-key">Date of Birth</span><span class="d-val">07 September 2005</span></div>
-      <div class="detail-row"><span class="d-key">Nationality</span><span class="d-val">Sri Lankan Tamil</span></div>
-      <div class="detail-row"><span class="d-key">Gender</span><span class="d-val">Male</span></div>
-      <div class="detail-row"><span class="d-key">Civil Status</span><span class="d-val">Single</span></div>
-      <div class="detail-row"><span class="d-key">School</span><span class="d-val">St. Michael's College National School, Batticaloa</span></div>
-      <div class="detail-row"><span class="d-key">Phone</span><span class="d-val">+94 77 377 4288</span></div>
+    <div class="info-card reveal">
+      <div class="info-card-head">// personal_info.json</div>
+      <div class="info-row2"><span class="ik">full_name</span><span class="iv">Kavalan Jason Yaasiel</span></div>
+      <div class="info-row2"><span class="ik">dob</span><span class="iv">07 September 2005</span></div>
+      <div class="info-row2"><span class="ik">nationality</span><span class="iv">Sri Lankan Tamil</span></div>
+      <div class="info-row2"><span class="ik">gender</span><span class="iv">Male</span></div>
+      <div class="info-row2"><span class="ik">school</span><span class="iv">St. Michael's College NS, Batticaloa</span></div>
+      <div class="info-row2"><span class="ik">phone</span><span class="iv">+94 77 377 4288</span></div>
+      <div class="info-row2"><span class="ik">linkedin</span><span class="iv">linkedin.com/in/jasonyaasiel</span></div>
     </div>
   </div>
 </section>
 
-<!-- SKILLS -->
+<!-- ── SKILLS ── -->
 <section id="skills">
-  <div class="section-header reveal">
-    <div class="section-num">02</div>
+  <div class="sec-head reveal">
+    <span class="sec-num">02</span>
     <h2>Technical <em>Skills</em></h2>
-    <span class="section-tag">// Expertise</span>
+    <span class="sec-tag">// expertise</span>
   </div>
-  <div class="skills-layout reveal">
-    <div class="skill-block">
-      <span class="skill-block-num">01</span>
-      <div class="skill-block-name">Cybersecurity</div>
-      <p class="skill-block-desc">Foundational knowledge in threat analysis, network defence, and security principles from a dedicated 3-month certification course.</p>
-      <div class="skill-pills"><span class="pill accent">Certified</span><span class="pill">Network Security</span><span class="pill">Threat Analysis</span><span class="pill">Security Principles</span></div>
+  <div class="skills-grid reveal">
+    <div class="skill-card">
+      <span class="skill-n">01</span>
+      <div class="skill-name">Cybersecurity</div>
+      <p class="skill-desc">Threat analysis, network defence, and security principles from a 3-month certification course at IVTC Campus.</p>
+      <div class="pills"><span class="pill g">Certified</span><span class="pill">IVTC Campus</span><span class="pill">Network Security</span><span class="pill">Threat Analysis</span></div>
     </div>
-    <div class="skill-block">
-      <span class="skill-block-num">02</span>
-      <div class="skill-block-name">Computer Networking</div>
-      <p class="skill-block-desc">Solid understanding of network protocols, topologies, and infrastructure design from a completed certification course.</p>
-      <div class="skill-pills"><span class="pill accent">Certified</span><span class="pill">TCP/IP</span><span class="pill">Network Design</span><span class="pill">Protocols</span></div>
+    <div class="skill-card">
+      <span class="skill-n">02</span>
+      <div class="skill-name">Computer Networking</div>
+      <p class="skill-desc">Solid understanding of network protocols, topologies, and infrastructure from a 3-month certification at IVTC Campus.</p>
+      <div class="pills"><span class="pill g">Certified</span><span class="pill">IVTC Campus</span><span class="pill">TCP/IP</span><span class="pill">Protocols</span></div>
     </div>
-    <div class="skill-block">
-      <span class="skill-block-num">03</span>
-      <div class="skill-block-name">Programming</div>
-      <p class="skill-block-desc">Growing proficiency in programming concepts and software development through university coursework and self-study.</p>
-      <div class="skill-pills"><span class="pill">Problem Solving</span><span class="pill">Algorithms</span><span class="pill">Logic Design</span></div>
+    <div class="skill-card">
+      <span class="skill-n">03</span>
+      <div class="skill-name">ICT &amp; Databases</div>
+      <p class="skill-desc">Strong foundation in Information &amp; Communication Technology and database concepts through A/L and university coursework.</p>
+      <div class="pills"><span class="pill">A/L ICT — B</span><span class="pill">SQL Basics</span><span class="pill">Systems Thinking</span></div>
     </div>
-    <div class="skill-block">
-      <span class="skill-block-num">04</span>
-      <div class="skill-block-name">Databases</div>
-      <p class="skill-block-desc">Keen interest and foundational knowledge in database systems, data modelling, and information management.</p>
-      <div class="skill-pills"><span class="pill">Data Modelling</span><span class="pill">SQL Basics</span><span class="pill">IS Concepts</span></div>
+    <div class="skill-card">
+      <span class="skill-n">04</span>
+      <div class="skill-name">Leadership</div>
+      <p class="skill-desc">Proven through school prefect duties, event organisation, and Lions Club community service initiatives.</p>
+      <div class="pills"><span class="pill">Team Management</span><span class="pill">Communication</span><span class="pill">Event Planning</span></div>
     </div>
-    <div class="skill-block">
-      <span class="skill-block-num">05</span>
-      <div class="skill-block-name">Leadership</div>
-      <p class="skill-block-desc">Proven leadership capacity through school prefect duties, event organisation, and Lions Club community service initiatives.</p>
-      <div class="skill-pills"><span class="pill">Team Management</span><span class="pill">Communication</span><span class="pill">Event Planning</span></div>
+    <div class="skill-card">
+      <span class="skill-n">05</span>
+      <div class="skill-name">Programming</div>
+      <p class="skill-desc">Growing proficiency in programming concepts and logic through university coursework and personal projects.</p>
+      <div class="pills"><span class="pill">Problem Solving</span><span class="pill">Algorithms</span><span class="pill">Logic Design</span></div>
     </div>
-    <div class="skill-block">
-      <span class="skill-block-num">06</span>
-      <div class="skill-block-name">ICT</div>
-      <p class="skill-block-desc">Strong foundation in Information & Communication Technology demonstrated through A/L examination performance and university selection.</p>
-      <div class="skill-pills"><span class="pill">A/L ICT — B</span><span class="pill">Systems Thinking</span><span class="pill">Digital Literacy</span></div>
+    <div class="skill-card">
+      <span class="skill-n">06</span>
+      <div class="skill-name">More Coming Soon</div>
+      <p class="skill-desc">Actively learning and expanding skill set. Check back for updates as university studies progress.</p>
+      <div class="pills"><span class="pill">In Progress</span></div>
     </div>
   </div>
 </section>
 
-<!-- EDUCATION -->
+<!-- ── EDUCATION ── -->
 <section id="education">
-  <div class="section-header reveal">
-    <div class="section-num">03</div>
+  <div class="sec-head reveal">
+    <span class="sec-num">03</span>
     <h2>Education &amp; <em>Certifications</em></h2>
-    <span class="section-tag">// Qualifications</span>
+    <span class="sec-tag">// qualifications</span>
   </div>
   <div class="edu-grid">
     <div class="edu-card reveal">
-      <div class="edu-year">2024</div>
-      <div class="edu-degree">B.Sc. (Hons) in Information Systems</div>
-      <div class="edu-institution">Sabaragamuwa University of Sri Lanka — Selected via UGC</div>
-      <ul class="edu-points">
-        <li>2024/25 Academic Year</li>
-      </ul>
+      <div class="edu-yr">2024 — Expected 2029</div>
+      <div class="edu-deg">B.Sc. (Hons) in Information Systems</div>
+      <div class="edu-inst">Sabaragamuwa University of Sri Lanka — Selected via UGC</div>
+      <ul class="edu-pts"><li>2024/25 Academic Year</li><li>Selected through UGC University Admissions</li></ul>
     </div>
     <div class="edu-card reveal">
-      <div class="edu-year">G.C.E. Advanced Level</div>
-      <div class="edu-degree">Commerce Stream — Z-Score 1.2644</div>
-      <div class="edu-institution">St. Michael's College National School · District Rank: 127</div>
-      <ul class="edu-points">
+      <div class="edu-yr">G.C.E. Advanced Level</div>
+      <div class="edu-deg">Commerce Stream — Z-Score 1.2644</div>
+      <div class="edu-inst">St. Michael's College National School · District Rank: 127</div>
+      <ul class="edu-pts">
         <li>Economics — B</li>
         <li>Accounting — B</li>
-        <li>Information and Communication Technology — B</li>
+        <li>Information &amp; Communication Technology — B</li>
         <li>General English — B</li>
       </ul>
     </div>
     <div class="edu-card reveal">
-      <div class="edu-year">Completed</div>
-      <div class="edu-degree">Cybersecurity Course — 3 Months</div>
-      <div class="edu-institution">Professional Certification</div>
-      <ul class="edu-points">
-        <li>Network security fundamentals and threat landscape</li>
-        <li>Security policies, encryption, and best practices</li>
-        <li>Hands-on practical components throughout</li>
-      </ul>
+      <div class="edu-yr">Completed</div>
+      <div class="edu-deg">Cybersecurity Course — 3 Months</div>
+      <div class="edu-inst">IVTC Campus · Professional Certification</div>
+      <ul class="edu-pts"><li>Network security fundamentals</li><li>Security policies &amp; best practices</li></ul>
     </div>
     <div class="edu-card reveal">
-      <div class="edu-year">Completed</div>
-      <div class="edu-degree">Computer Networking Course — 3 Months</div>
-      <div class="edu-institution">Professional Certification</div>
-      <ul class="edu-points">
-        <li>Network topologies, protocols, and infrastructure</li>
-        <li>TCP/IP, routing, switching fundamentals</li>
-        <li>Practical lab sessions and configuration exercises</li>
-      </ul>
+      <div class="edu-yr">Completed</div>
+      <div class="edu-deg">Computer Networking — 3 Months</div>
+      <div class="edu-inst">IVTC Campus · Professional Certification</div>
+      <ul class="edu-pts"><li>Network topologies &amp; protocols</li><li>TCP/IP, routing, switching</li></ul>
     </div>
   </div>
-  <div style="margin-top:40px;" class="reveal">
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;">G.C.E. Ordinary Level Results</div>
-    <div class="grades-strip">
-      <div class="grade-item"><div class="grade-subject">Religion</div><div class="grade-mark a">A</div></div>
-      <div class="grade-item"><div class="grade-subject">Tamil</div><div class="grade-mark a">A</div></div>
-      <div class="grade-item"><div class="grade-subject">Mathematics</div><div class="grade-mark a">A</div></div>
-      <div class="grade-item"><div class="grade-subject">English</div><div class="grade-mark a">A</div></div>
-      <div class="grade-item"><div class="grade-subject">H.P.E. (B3)</div><div class="grade-mark a">A</div></div>
-      <div class="grade-item"><div class="grade-subject">Science</div><div class="grade-mark c">C</div></div>
-      <div class="grade-item"><div class="grade-subject">History</div><div class="grade-mark c">C</div></div>
-      <div class="grade-item"><div class="grade-subject">Tamil Lit.</div><div class="grade-mark c">C</div></div>
-      <div class="grade-item"><div class="grade-subject">Second Lang. Sinhala</div><div class="grade-mark c">C</div></div>
+
+  <div class="reveal">
+    <div class="grades-label">// G.C.E. Ordinary Level Results</div>
+    <div class="grades-grid">
+      <div class="grade-cell"><div class="g-sub">Religion</div><div class="g-mark a">A</div></div>
+      <div class="grade-cell"><div class="g-sub">Tamil</div><div class="g-mark a">A</div></div>
+      <div class="grade-cell"><div class="g-sub">Mathematics</div><div class="g-mark a">A</div></div>
+      <div class="grade-cell"><div class="g-sub">English</div><div class="g-mark a">A</div></div>
+      <div class="grade-cell"><div class="g-sub">H.P.E.</div><div class="g-mark a">A</div></div>
+      <div class="grade-cell"><div class="g-sub">Science</div><div class="g-mark c">C</div></div>
+      <div class="grade-cell"><div class="g-sub">History</div><div class="g-mark c">C</div></div>
+      <div class="grade-cell"><div class="g-sub">Tamil Lit.</div><div class="g-mark c">C</div></div>
+      <div class="grade-cell"><div class="g-sub">Sinhala</div><div class="g-mark c">C</div></div>
     </div>
   </div>
 </section>
 
-<!-- EXPERIENCE -->
+<!-- ── EXPERIENCE ── -->
 <section id="experience">
-  <div class="section-header reveal">
-    <div class="section-num">04</div>
+  <div class="sec-head reveal">
+    <span class="sec-num">04</span>
     <h2>Experience &amp; <em>Activities</em></h2>
-    <span class="section-tag">// Leadership</span>
+    <span class="sec-tag">// leadership</span>
   </div>
-  <div class="exp-timeline">
+  <div class="exp-list-wrap">
     <div class="exp-item reveal">
-      <div class="exp-date-col">Jan 2026<br>— Present</div>
+      <div class="exp-date">Jan 2026<br>— Present</div>
       <div>
         <div class="exp-role">Student Member</div>
-        <div class="exp-org">Lions Club International</div>
-        <ul class="exp-list">
+        <div class="exp-org">Lions Club of Batticaloa Supreme</div>
+        <ul class="exp-pts">
           <li>Actively involved in community service and volunteer initiatives</li>
-          <li>Participated in team-based projects and social impact programs</li>
-          <li>Developed leadership, teamwork, and communication skills through structured programmes</li>
+          <li>Participated in team-based projects and social impact programmes</li>
+          <li>Developed leadership, teamwork, and communication skills</li>
         </ul>
       </div>
     </div>
     <div class="exp-item reveal">
-      <div class="exp-date-col">2023 — 2024</div>
+      <div class="exp-date">2023 — 2024</div>
       <div>
         <div class="exp-role">School Prefect</div>
         <div class="exp-org">St. Michael's College National School, Batticaloa</div>
-        <ul class="exp-list">
-          <li>Maintained discipline and actively supported school administration operations</li>
-          <li>Assisted in planning and organising school events and student activities</li>
-          <li>Demonstrated leadership, responsibility, and conflict-resolution skills daily</li>
+        <ul class="exp-pts">
+          <li>Maintained discipline and supported school administration</li>
+          <li>Assisted in organising school events and student activities</li>
+          <li>Demonstrated leadership and conflict-resolution skills daily</li>
         </ul>
       </div>
     </div>
   </div>
 </section>
 
-<!-- PROJECTS -->
+<!-- ── PROJECTS ── -->
 <section id="projects">
-  <div class="section-header reveal">
-    <div class="section-num">05</div>
+  <div class="sec-head reveal">
+    <span class="sec-num">05</span>
     <h2>Featured <em>Projects</em></h2>
-    <span class="section-tag">// Work</span>
+    <span class="sec-tag">// work</span>
   </div>
-  <div class="project-grid">
-    <div class="project-card reveal">
-      <h3>Cybersecurity Lab</h3>
-      <p>Hands-on security experiments and penetration testing practice based on coursework fundamentals.</p>
-      <span class="project-tag">Cybersecurity</span>
-    </div>
-    <div class="project-card reveal">
-      <h3>Student Management System</h3>
-      <p>Database-driven information system built for academic workflows and record management.</p>
-      <span class="project-tag">Databases</span>
-    </div>
-    <div class="project-card reveal">
+  <div class="proj-grid">
+    <div class="proj-card reveal">
       <h3>Portfolio Website</h3>
-      <p>Modern animated personal portfolio built with HTML, CSS, and JavaScript from scratch.</p>
-      <span class="project-tag">Web Dev</span>
+      <p>Designed and built this personal portfolio website using HTML, CSS, and JavaScript.</p>
+      <span class="proj-tag">Web Dev</span>
+    </div>
+    <div class="proj-card proj-placeholder reveal">
+      <h3>Coming Soon</h3>
+      <p>More projects will be added as university work and personal builds progress.</p>
+      <span class="proj-tag">In Progress</span>
+    </div>
+    <div class="proj-card proj-placeholder reveal">
+      <h3>Coming Soon</h3>
+      <p>Exploring cybersecurity and networking projects as part of ongoing learning.</p>
+      <span class="proj-tag">In Progress</span>
     </div>
   </div>
 </section>
 
-<!-- CONTACT -->
+<!-- ── CONTACT ── -->
 <section id="contact">
-  <div class="section-header reveal">
-    <div class="section-num">06</div>
+  <div class="sec-head reveal">
+    <span class="sec-num">06</span>
     <h2>Get in <em>Touch</em></h2>
-    <span class="section-tag">// Contact</span>
+    <span class="sec-tag">// contact</span>
   </div>
-  <div class="contact-layout">
-    <div class="contact-intro">
-      <p>I'm eager to connect with companies, mentors, and collaborators in the IT and cybersecurity space. Whether it's an internship opportunity, a project, or just a conversation — feel free to reach out.</p>
-      <div class="contact-links">
-        <a href="mailto:jasonyaasielofficial@gmail.com" class="c-link">
-          <div class="c-link-icon">✉</div>
-          <div><span class="c-link-label">Email</span><span class="c-link-val">jasonyaasielofficial@gmail.com</span></div>
-        </a>
-        <a href="tel:+94773774288" class="c-link">
-          <div class="c-link-icon">📞</div>
-          <div><span class="c-link-label">Phone</span><span class="c-link-val">+94 77 377 4288</span></div>
-        </a>
-        <a href="https://linkedin.com/in/jasonyaasiel" target="_blank" class="c-link">
-          <div class="c-link-icon">in</div>
-          <div><span class="c-link-label">LinkedIn</span><span class="c-link-val">linkedin.com/in/jasonyaasiel</span></div>
-        </a>
-        <a href="#" class="c-link">
-          <div class="c-link-icon">📍</div>
-          <div><span class="c-link-label">Location</span><span class="c-link-val">Batticaloa, Sri Lanka</span></div>
-        </a>
-      </div>
+  <div class="contact-wrap">
+    <p class="contact-intro">Open to internships, collaborations, and conversations in IT and cybersecurity. Feel free to reach out via any channel below.</p>
+    <div class="c-links">
+      <a href="mailto:jasonyaasielofficial@gmail.com" class="c-item">
+        <div class="c-icon">✉</div>
+        <div><span class="c-lbl">Email</span><span class="c-val">jasonyaasielofficial@gmail.com</span></div>
+      </a>
+      <a href="tel:+94773774288" class="c-item">
+        <div class="c-icon">📞</div>
+        <div><span class="c-lbl">Phone</span><span class="c-val">+94 77 377 4288</span></div>
+      </a>
+      <a href="https://linkedin.com/in/jasonyaasiel" target="_blank" class="c-item">
+        <div class="c-icon">in</div>
+        <div><span class="c-lbl">LinkedIn</span><span class="c-val">linkedin.com/in/jasonyaasiel</span></div>
+      </a>
+      <a href="#" class="c-item">
+        <div class="c-icon">📍</div>
+        <div><span class="c-lbl">Location</span><span class="c-val">Batticaloa, Sri Lanka</span></div>
+      </a>
     </div>
-
   </div>
 </section>
 
 <footer>
-  <div class="f-logo">Jason <em>Yaasiel</em></div>
-  <span>Batticaloa, Sri Lanka · jasonyaasielofficial@gmail.com</span>
-  <span>© 2026 · Built By Jason Yaasiel</span>
+  <span class="f-brand">&gt; JasonYaasiel</span>
+  <span>Batticaloa, Sri Lanka</span>
+  <span>© 2026 · Built by Jason Yaasiel</span>
 </footer>
 
 <script>
-// ── Terminal intro: fade out after 1.8s ──
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    const intro = document.getElementById('terminalIntro');
-    intro.classList.add('hidden');
-    setTimeout(() => intro.remove(), 700);
-  }, 1800);
-});
-
-// ── Cyber glow follows cursor ──
-const glow = document.getElementById('glow');
-document.addEventListener('mousemove', e => {
-  glow.style.left = e.clientX + 'px';
-  glow.style.top  = e.clientY + 'px';
-});
-
-// ── Dark / light toggle ──
-const btn = document.getElementById('themeBtn');
-btn.addEventListener('click', () => {
-  document.body.classList.toggle('dark');
-  btn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
-});
-
-// ── Scroll reveal ──
-const obs = new IntersectionObserver(entries => {
-  entries.forEach((e, i) => {
-    if (e.isIntersecting) {
-      setTimeout(() => e.target.classList.add('in'), i * 70);
-    }
+// Boot sequence
+(function(){
+  const rows = ['b1','b2','b3'];
+  rows.forEach((id,i)=>{
+    setTimeout(()=>{
+      document.getElementById(id).classList.add('show');
+    }, 400 + i*500);
   });
-}, { threshold: 0.1 });
-document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  setTimeout(()=>{
+    const boot = document.getElementById('boot');
+    boot.classList.add('hide');
+    setTimeout(()=>boot.remove(), 800);
+  }, 2400);
+})();
+
+// Cursor glow
+const glow = document.getElementById('glow');
+document.addEventListener('mousemove', e=>{
+  glow.style.left = e.clientX+'px';
+  glow.style.top  = e.clientY+'px';
+});
+
+// Scroll reveal
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting) setTimeout(()=>e.target.classList.add('in'), i*60);
+  });
+},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 </script>
 </body>
 </html>
