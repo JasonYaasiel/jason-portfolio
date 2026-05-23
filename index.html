@@ -1,4 +1,3 @@
-cat > /mnt/user-data/outputs/index.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,7 +44,6 @@ body{
   transition:opacity 0.7s ease;
 }
 #boot.hide{opacity:0;pointer-events:none}
-#boot-line{white-space:nowrap;overflow:hidden}
 .boot-row{display:flex;gap:12px;align-items:center;opacity:0;transform:translateY(6px);transition:opacity 0.3s,transform 0.3s}
 .boot-row.show{opacity:1;transform:none}
 .boot-row .tag{color:#64748b}
@@ -73,22 +71,6 @@ body::before{
   filter:blur(20px);
 }
 
-/* ── THEME TOGGLE ── */
-#themeBtn{
-  position:fixed;right:16px;bottom:16px;
-  width:44px;height:44px;
-  border:1px solid var(--border);
-  border-radius:50%;
-  background:var(--bg2);
-  color:var(--green);
-  font-size:18px;
-  cursor:pointer;
-  z-index:8000;
-  transition:border-color 0.2s,box-shadow 0.2s;
-}
-#themeBtn:hover{border-color:var(--green);box-shadow:0 0 16px var(--glow)}
-
-
 /* ── NAV ── */
 nav{
   position:fixed;top:0;left:0;right:0;
@@ -99,7 +81,6 @@ nav{
   backdrop-filter:blur(16px);
   border-bottom:1px solid var(--border);
 }
-body.light nav{background:rgba(248,250,252,0.9)}
 .nav-logo{
   font-family:'Space Mono',monospace;
   font-size:1rem;font-weight:700;
@@ -233,7 +214,6 @@ h1 .name-dim{
 }
 .chip:hover,.chip.on{border-color:var(--green);color:var(--green)}
 .stats-row{display:flex;gap:32px;flex-wrap:wrap}
-.stat-box{}
 .stat-n{
   font-size:2.2rem;font-weight:700;
   color:var(--green);display:block;line-height:1;
@@ -400,24 +380,25 @@ h2 em{color:var(--green);font-style:normal}
   margin:36px 0 12px;
 }
 .grades-grid{
-  background:#0b0f1a;
+  background:var(--bg);
   border:1px solid rgba(0,229,160,0.08);
   border-radius:8px;overflow:hidden;
   display:grid;grid-template-columns:repeat(4,1fr);
 }
-body.light .grades-grid{background:#0f172a}
 .grade-cell{
   padding:16px;
   border-right:1px solid rgba(255,255,255,0.05);
   border-bottom:1px solid rgba(255,255,255,0.05);
 }
+/* remove right border on every 4th cell */
 .grade-cell:nth-child(4n){border-right:none}
-.grade-cell:nth-last-child(-n+1){border-bottom:none}
+/* remove bottom border on last row (cells 7,8,9 — padded to 9 total would be row 3) */
+.grade-cell:nth-child(n+7){border-bottom:none}
 .g-sub{font-family:'Space Mono',monospace;font-size:0.6rem;color:rgba(255,255,255,0.35);margin-bottom:6px}
 .g-mark{font-size:1.4rem;font-weight:700}
 .g-mark.a{color:#86efac}
 .g-mark.b{color:#93c5fd}
-.g-mark.c{color:rgba(255,255,255,0.25)}
+.g-mark.c{color:rgba(255,255,255,0.35)}
 
 /* ── EXPERIENCE ── */
 .exp-list-wrap{max-width:780px}
@@ -471,27 +452,19 @@ body.light .grades-grid{background:#0f172a}
 .proj-placeholder{
   opacity:0.4;border-style:dashed;
 }
-.proj-placeholder h3,.proj-placeholder p{color:var(--muted)}
 
 /* ── CONTACT ── */
-#contact{background:#0b0f1a}
-body.light #contact{background:#0f172a}
-#contact .sec-head{border-bottom-color:rgba(255,255,255,0.08)}
-#contact .sec-num{color:rgba(0,229,160,0.4)}
-#contact h2,#contact h2 em{color:#e2e8f0}
-#contact h2 em{color:#6ee7b7}
-#contact .sec-tag{color:rgba(255,255,255,0.25)}
-
+#contact{background:var(--bg)}
 .contact-wrap{max-width:560px}
 .contact-intro{
   font-size:0.88rem;line-height:1.8;
-  color:rgba(255,255,255,0.4);margin-bottom:32px;
+  color:var(--muted);margin-bottom:32px;
 }
 .c-links{display:flex;flex-direction:column;gap:12px}
 .c-item{
   display:flex;align-items:center;gap:14px;
   padding:14px 18px;
-  border:1px solid rgba(255,255,255,0.07);
+  border:1px solid var(--border);
   border-radius:6px;
   text-decoration:none;
   transition:border-color 0.2s,background 0.2s;
@@ -499,7 +472,7 @@ body.light #contact{background:#0f172a}
 .c-item:hover{border-color:rgba(0,229,160,0.35);background:rgba(0,229,160,0.05)}
 .c-icon{
   width:34px;height:34px;flex-shrink:0;
-  background:rgba(255,255,255,0.05);
+  background:rgba(255,255,255,0.04);
   border-radius:5px;
   display:flex;align-items:center;justify-content:center;
   font-size:0.9rem;
@@ -507,30 +480,27 @@ body.light #contact{background:#0f172a}
 .c-lbl{
   font-family:'Space Mono',monospace;font-size:0.58rem;
   letter-spacing:0.15em;text-transform:uppercase;
-  color:rgba(255,255,255,0.25);display:block;margin-bottom:1px;
+  color:var(--muted);display:block;margin-bottom:1px;
 }
-.c-val{font-size:0.82rem;color:rgba(255,255,255,0.65)}
+.c-val{font-size:0.82rem;color:var(--text)}
 
 /* ── FOOTER ── */
 footer{
   padding:20px 48px;
-  background:#0b0f1a;
-  border-top:1px solid rgba(255,255,255,0.06);
+  background:var(--bg);
+  border-top:1px solid var(--border);
   display:flex;align-items:center;justify-content:space-between;
   font-family:'Space Mono',monospace;
   font-size:0.6rem;letter-spacing:0.08em;
-  color:rgba(255,255,255,0.2);
+  color:var(--muted);
 }
-body.light footer{background:#0f172a}
 .f-brand{color:var(--green);font-weight:700;font-size:0.8rem}
 
 /* ── REVEAL ── */
 .reveal{opacity:0;transform:translateY(20px);transition:opacity 0.6s ease,transform 0.6s ease}
 .reveal.in{opacity:1;transform:none}
 
-/* ─────────────────────────────
-   RESPONSIVE — TABLET ≤ 900px
-───────────────────────────── */
+/* ── RESPONSIVE — TABLET ≤ 900px ── */
 @media(max-width:900px){
   nav{padding:0 20px}
   .nav-links{display:none}
@@ -549,13 +519,15 @@ body.light footer{background:#0f172a}
   .edu-grid{grid-template-columns:1fr;gap:16px}
   .exp-item{grid-template-columns:1fr;gap:6px}
   .grades-grid{grid-template-columns:repeat(3,1fr)}
+  /* fix bottom-border removal for 3-col layout (rows of 3, last row starts at cell 7) */
+  .grades-grid .grade-cell:nth-child(n+7){border-bottom:none}
+  .grades-grid .grade-cell:nth-child(4n){border-right:revert}
+  .grades-grid .grade-cell:nth-child(3n){border-right:none}
 
   footer{flex-direction:column;gap:8px;text-align:center;padding:16px}
 }
 
-/* ─────────────────────────────
-   RESPONSIVE — MOBILE ≤ 560px
-───────────────────────────── */
+/* ── RESPONSIVE — MOBILE ≤ 560px ── */
 @media(max-width:560px){
   nav{padding:0 14px;height:54px}
   .nav-pill{display:none}
@@ -608,7 +580,6 @@ body.light footer{background:#0f172a}
   .c-item{padding:12px 14px;gap:10px}
   .c-val{font-size:0.78rem;word-break:break-all}
 
-  #themeBtn{right:12px;bottom:12px;width:40px;height:40px;font-size:16px}
   footer{font-size:0.56rem;padding:14px}
 }
 </style>
@@ -619,14 +590,11 @@ body.light footer{background:#0f172a}
 <div id="boot">
   <div class="boot-row" id="b1"><span class="tag">$</span> loading portfolio</div>
   <div class="boot-row" id="b2"><span class="tag">✓</span> modules loaded</div>
-  <div class="boot-row" id="b3"><span class="tag">✓</span> jason_yaasiel.init()<span class="cursor-blink"></span></div>
+  <div class="boot-row" id="b3"><span class="tag">✓</span> jason yaasiel.init()<span class="cursor-blink"></span></div>
 </div>
 
 <!-- Cursor glow -->
 <div id="glow"></div>
-
-<!-- Theme toggle -->
-<button id="themeBtn" title="Toggle theme">☀️</button>
 
 <!-- NAV -->
 <nav>
@@ -651,19 +619,19 @@ body.light footer{background:#0f172a}
     <h1>
       Jason
       <span class="name-green"> Yaasiel</span>
-      <span class="name-dim">//Information Systems</span>
+      <span class="name-dim">Info. Sys</span>
     </h1>
     <div class="hero-sub">
       <span>Programmer</span> · <span>Cybersecurity</span> · <span>Leader</span>
     </div>
     <p class="hero-desc">
       Undergraduate at <strong>Sabaragamuwa University of Sri Lanka</strong>, passionate about
-      <strong>cybersecurity, networking, and building real-world solutions</strong>. I bring both
+      <strong>cybersecurity, networking, and building real world solutions</strong>. I bring both
       technical skills and leadership developed through community service.
     </p>
     <div class="hero-info">
       <div class="info-row"><span class="info-key">location</span>Batticaloa, Sri Lanka</div>
-      <div class="info-row"><span class="info-key">degree</span>B.Sc. (Hons) Information Systems — SUSL</div>
+      <div class="info-row"><span class="info-key">degree</span>B.Sc. (Hons) Information Systems, SUSL(R)</div>
       <div class="info-row"><span class="info-key">email</span>jasonyaasielofficial@gmail.com</div>
     </div>
     <div class="hero-btns">
@@ -712,21 +680,26 @@ body.light footer{background:#0f172a}
   </div>
   <div class="about-wrap">
     <div class="about-text reveal">
-      <p>I'm <strong>Jason Yaasiel</strong>, an Information Systems undergraduate at Sabaragamuwa University of Sri Lanka (SUSL), Academic Year 2024/25. I'm driven by a curiosity for how technology solves real-world problems — especially in <strong>cybersecurity, databases, and software systems</strong>.</p>
-      <p>My technical foundation includes completed certifications in <strong>Cybersecurity</strong> and <strong>Computer Networking</strong> from IVTC Campus. I'm continuously growing my programming and systems knowledge through university studies.</p>
-      <p>Beyond tech, I value leadership and service. As a <strong>School Prefect</strong> at St. Michael's College and a member of the <strong>Lions Club of Batticaloa Supreme</strong>, I've built communication and teamwork skills I carry into every project.</p>
-    </div>
+      <p>I’m Jason Yaasiel, an undergraduate at <strong>Sabaragamuwa University of Sri Lanka.</strong></p> 
+      <p>Passionate about <strong>cybersecurity, networking, and creating technology-driven solutions to real-world challenges.</strong></p> 
+      <p>Alongside my technical journey, community service has shaped my leadership skills and strengthened my commitment to making a positive impact.</p>
     <div class="info-card reveal">
-      <div class="info-card-head">// personal_info.json</div>
-      <div class="info-row2"><span class="ik">full_name</span><span class="iv">Kavalan Jason Yaasiel</span></div>
-      <div class="info-row2"><span class="ik">dob</span><span class="iv">07 September 2005</span></div>
-      <div class="info-row2"><span class="ik">nationality</span><span class="iv">Sri Lankan Tamil</span></div>
-      <div class="info-row2"><span class="ik">gender</span><span class="iv">Male</span></div>
-      <div class="info-row2"><span class="ik">school</span><span class="iv">St. Michael's College NS, Batticaloa</span></div>
-      <div class="info-row2"><span class="ik">phone</span><span class="iv">+94 77 377 4288</span></div>
-      <div class="info-row2"><span class="ik">linkedin</span><span class="iv">linkedin.com/in/jasonyaasiel</span></div>
-    </div>
+  <div class="info-card-head">// personal info</div>
+  <div class="info-row2"><span class="ik">full_name</span><span class="iv">Kavalan Jason Yaasiel</span></div>
+  <div class="info-row2"><span class="ik">dob</span><span class="iv">07 September 2005</span></div>
+  <div class="info-row2"><span class="ik">nationality</span><span class="iv">Sri Lankan Tamil</span></div>
+  <div class="info-row2"><span class="ik">gender</span><span class="iv">Male</span></div>
+  <div class="info-row2"><span class="ik">school</span><span class="iv">St. Michael's College NS, Batticaloa</span></div>
+  <div class="info-row2"><span class="ik">phone</span><span class="iv">+94 77 377 4288</span></div>
+  <div class="info-row2">
+    <span class="ik">linkedin</span>
+    <span class="iv">
+      <a href="https://www.linkedin.com/in/jasonyaasiel" target="_blank" rel="noopener noreferrer">
+        linkedin.com/in/jasonyaasiel
+      </a>
+    </span>
   </div>
+</div>
 </section>
 
 <!-- ── SKILLS ── -->
@@ -740,20 +713,20 @@ body.light footer{background:#0f172a}
     <div class="skill-card">
       <span class="skill-n">01</span>
       <div class="skill-name">Cybersecurity</div>
-      <p class="skill-desc">Threat analysis, network defence, and security principles from a 3-month certification course at IVTC Campus.</p>
-      <div class="pills"><span class="pill g">Certified</span><span class="pill">IVTC Campus</span><span class="pill">Network Security</span><span class="pill">Threat Analysis</span></div>
+      <p class="skill-desc">Solid understanding of Cybersecurity fundamentals from a 3-month certification at IVTC Campus.</p>
+      <div class="pills"><span class="pill g">Certified</span><span class="pill">IVTC Campus</span><span class="pill">Fundamentals</span></div>
     </div>
     <div class="skill-card">
       <span class="skill-n">02</span>
       <div class="skill-name">Computer Networking</div>
-      <p class="skill-desc">Solid understanding of network protocols, topologies, and infrastructure from a 3-month certification at IVTC Campus.</p>
-      <div class="pills"><span class="pill g">Certified</span><span class="pill">IVTC Campus</span><span class="pill">TCP/IP</span><span class="pill">Protocols</span></div>
+      <p class="skill-desc">Solid understanding of Computer Networking fundamentals from a 3-month certification at IVTC Campus.</p>
+      <div class="pills"><span class="pill g">Certified</span><span class="pill">IVTC Campus</span><span class="pill">Fundamentals</span></div>
     </div>
     <div class="skill-card">
       <span class="skill-n">03</span>
       <div class="skill-name">ICT &amp; Databases</div>
       <p class="skill-desc">Strong foundation in Information &amp; Communication Technology and database concepts through A/L and university coursework.</p>
-      <div class="pills"><span class="pill">A/L ICT — B</span><span class="pill">SQL Basics</span><span class="pill">Systems Thinking</span></div>
+      <div class="pills"><span class="pill g">A/L ICT — B</span><span class="pill">SQL Basics</span><span class="pill">Systems Thinking</span></div>
     </div>
     <div class="skill-card">
       <span class="skill-n">04</span>
@@ -763,13 +736,13 @@ body.light footer{background:#0f172a}
     </div>
     <div class="skill-card">
       <span class="skill-n">05</span>
-      <div class="skill-name">Programming</div>
-      <p class="skill-desc">Growing proficiency in programming concepts and logic through university coursework and personal projects.</p>
-      <div class="pills"><span class="pill">Problem Solving</span><span class="pill">Algorithms</span><span class="pill">Logic Design</span></div>
+      <div class="skill-name">Coming Soon</div>
+      <p class="skill-desc">Actively learning and expanding skill set. Check back for updates as university studies progress.</p>
+      <div class="pills"><span class="pill">In Progress</span></div>
     </div>
     <div class="skill-card">
       <span class="skill-n">06</span>
-      <div class="skill-name">More Coming Soon</div>
+      <div class="skill-name">Coming Soon</div>
       <p class="skill-desc">Actively learning and expanding skill set. Check back for updates as university studies progress.</p>
       <div class="pills"><span class="pill">In Progress</span></div>
     </div>
@@ -785,13 +758,15 @@ body.light footer{background:#0f172a}
   </div>
   <div class="edu-grid">
     <div class="edu-card reveal">
-      <div class="edu-yr">2024 — Expected 2029</div>
+      <div class="edu-yr">2026 to Present</div>
       <div class="edu-deg">B.Sc. (Hons) in Information Systems</div>
-      <div class="edu-inst">Sabaragamuwa University of Sri Lanka — Selected via UGC</div>
-      <ul class="edu-pts"><li>2024/25 Academic Year</li><li>Selected through UGC University Admissions</li></ul>
+      <div class="edu-inst">Sabaragamuwa University of Sri Lanka</div>
+      <ul class="edu-pts">
+        <li>2024/25 Academic Year</li>
+      </ul>
     </div>
     <div class="edu-card reveal">
-      <div class="edu-yr">G.C.E. Advanced Level</div>
+      <div class="edu-yr">G.C.E. Advanced Level (2024)</div>
       <div class="edu-deg">Commerce Stream — Z-Score 1.2644</div>
       <div class="edu-inst">St. Michael's College National School · District Rank: 127</div>
       <ul class="edu-pts">
@@ -803,15 +778,19 @@ body.light footer{background:#0f172a}
     </div>
     <div class="edu-card reveal">
       <div class="edu-yr">Completed</div>
-      <div class="edu-deg">Cybersecurity Course — 3 Months</div>
+      <div class="edu-deg">Cybersecurity Course: 3 Months</div>
       <div class="edu-inst">IVTC Campus · Professional Certification</div>
-      <ul class="edu-pts"><li>Network security fundamentals</li><li>Security policies &amp; best practices</li></ul>
+      <ul class="edu-pts">
+        <li>Cyber security fundamentals</li>
+      </ul>
     </div>
     <div class="edu-card reveal">
       <div class="edu-yr">Completed</div>
-      <div class="edu-deg">Computer Networking — 3 Months</div>
+      <div class="edu-deg">Computer Networking: 3 Months</div>
       <div class="edu-inst">IVTC Campus · Professional Certification</div>
-      <ul class="edu-pts"><li>Network topologies &amp; protocols</li><li>TCP/IP, routing, switching</li></ul>
+      <ul class="edu-pts">
+        <li>Computer Networking fundamentals</li>
+      </ul>
     </div>
   </div>
 
@@ -840,7 +819,7 @@ body.light footer{background:#0f172a}
   </div>
   <div class="exp-list-wrap">
     <div class="exp-item reveal">
-      <div class="exp-date">Jan 2026<br>— Present</div>
+      <div class="exp-date">Jan 2026<br>to Present</div>
       <div>
         <div class="exp-role">Student Member</div>
         <div class="exp-org">Lions Club of Batticaloa Supreme</div>
@@ -852,7 +831,7 @@ body.light footer{background:#0f172a}
       </div>
     </div>
     <div class="exp-item reveal">
-      <div class="exp-date">2023 — 2024</div>
+      <div class="exp-date">2023 to 2024</div>
       <div>
         <div class="exp-role">School Prefect</div>
         <div class="exp-org">St. Michael's College National School, Batticaloa</div>
@@ -876,7 +855,7 @@ body.light footer{background:#0f172a}
   <div class="proj-grid">
     <div class="proj-card reveal">
       <h3>Portfolio Website</h3>
-      <p>Designed and built this personal portfolio website using HTML, CSS, and JavaScript.</p>
+      <p>Designed and built this personal portfolio website</p>
       <span class="proj-tag">Web Dev</span>
     </div>
     <div class="proj-card proj-placeholder reveal">
@@ -886,7 +865,7 @@ body.light footer{background:#0f172a}
     </div>
     <div class="proj-card proj-placeholder reveal">
       <h3>Coming Soon</h3>
-      <p>Exploring cybersecurity and networking projects as part of ongoing learning.</p>
+      <p>More projects will be added as university work and personal builds progress.</p>
       <span class="proj-tag">In Progress</span>
     </div>
   </div>
@@ -910,7 +889,7 @@ body.light footer{background:#0f172a}
         <div class="c-icon">📞</div>
         <div><span class="c-lbl">Phone</span><span class="c-val">+94 77 377 4288</span></div>
       </a>
-      <a href="https://linkedin.com/in/jasonyaasiel" target="_blank" class="c-item">
+      <a href="https://linkedin.com/in/jasonyaasiel" target="_blank" rel="noopener noreferrer" class="c-item">
         <div class="c-icon">in</div>
         <div><span class="c-lbl">LinkedIn</span><span class="c-val">linkedin.com/in/jasonyaasiel</span></div>
       </a>
@@ -931,33 +910,34 @@ body.light footer{background:#0f172a}
 <script>
 // Boot sequence
 (function(){
-  const rows = ['b1','b2','b3'];
-  rows.forEach((id,i)=>{
-    setTimeout(()=>{
-      document.getElementById(id).classList.add('show');
-    }, 400 + i*500);
+  ['b1','b2','b3'].forEach((id, i) => {
+    setTimeout(() => document.getElementById(id).classList.add('show'), 400 + i * 500);
   });
-  setTimeout(()=>{
+  setTimeout(() => {
     const boot = document.getElementById('boot');
     boot.classList.add('hide');
-    setTimeout(()=>boot.remove(), 800);
+    setTimeout(() => boot.remove(), 800);
   }, 2400);
 })();
 
-// Cursor glow
-const glow = document.getElementById('glow');
-document.addEventListener('mousemove', e=>{
-  glow.style.left = e.clientX+'px';
-  glow.style.top  = e.clientY+'px';
-});
+// Cursor glow — desktop only (skip on touch devices)
+if (window.matchMedia('(pointer: fine)').matches) {
+  const glow = document.getElementById('glow');
+  document.addEventListener('mousemove', e => {
+    glow.style.left = e.clientX + 'px';
+    glow.style.top  = e.clientY + 'px';
+  });
+} else {
+  document.getElementById('glow').remove();
+}
 
 // Scroll reveal
-const obs = new IntersectionObserver(entries=>{
-  entries.forEach((e,i)=>{
-    if(e.isIntersecting) setTimeout(()=>e.target.classList.add('in'), i*60);
+const obs = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) setTimeout(() => e.target.classList.add('in'), i * 60);
   });
-},{threshold:0.1});
-document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 </script>
 </body>
 </html>
