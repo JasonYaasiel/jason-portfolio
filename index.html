@@ -234,7 +234,7 @@ h1 .name-dim {
   font-size: 2.2rem; font-weight: 700;
   color: var(--green); display: block; line-height: 1;
   font-variant-numeric: tabular-nums;
-  min-width: 3ch;          /* prevent layout shift during count-up */
+  min-width: 3ch;
 }
 .stat-l {
   font-family: 'Space Mono', monospace;
@@ -397,9 +397,8 @@ h2 em { color: var(--green); font-style: normal; }
   border-right: 1px solid rgba(255,255,255,0.05);
   border-bottom: 1px solid rgba(255,255,255,0.05);
 }
-/* 4-column layout: 9 cells = rows of 4,4,1 */
 .grade-cell:nth-child(4n)   { border-right: none; }
-.grade-cell:nth-child(n+9)  { border-bottom: none; }   /* last row starts at cell 9 (only 1 cell) */
+.grade-cell:nth-child(n+9)  { border-bottom: none; }
 .g-sub { font-family: 'Space Mono', monospace; font-size: 0.6rem; color: rgba(255,255,255,0.35); margin-bottom: 6px; }
 .g-mark { font-size: 1.4rem; font-weight: 700; }
 .g-mark.a { color: #86efac; }
@@ -509,9 +508,28 @@ footer {
   .nav-links { display: none; }
   .nav-pill { font-size: 0.58rem; padding: 5px 12px; }
 
-  #home { grid-template-columns: 1fr; }
-  .hero-left { padding: 76px 20px 52px; border-right: none; }
-  .hero-right { display: none; }
+  #home {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+  }
+  .hero-left {
+    padding: 76px 20px 40px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  /* Show hero-right on tablet/mobile as a horizontal strip */
+  .hero-right {
+    display: flex;
+    flex-direction: row;
+    min-height: unset;
+  }
+  .hero-panel {
+    flex: 1;
+    padding: 28px 20px;
+    border-bottom: none;
+    border-right: 1px solid var(--border);
+  }
+  .hero-panel:last-child { border-right: none; }
 
   section { padding: 64px 20px; }
   .sec-head { flex-wrap: wrap; gap: 10px; margin-bottom: 36px; }
@@ -526,7 +544,6 @@ footer {
   .grades-grid { grid-template-columns: repeat(3,1fr); }
   .grade-cell:nth-child(4n)  { border-right: revert; }
   .grade-cell:nth-child(3n)  { border-right: none; }
-  /* 9 cells in 3-col = 3 rows. last row = cells 7-9 */
   .grade-cell:nth-child(n+7) { border-bottom: none; }
   .grade-cell:nth-child(n+9) { border-bottom: revert; }
 
@@ -538,7 +555,7 @@ footer {
   nav { padding: 0 14px; height: 54px; }
   .nav-pill { display: none; }
 
-  .hero-left { padding: 70px 14px 44px; }
+  .hero-left { padding: 70px 14px 36px; }
   h1 { font-size: 2.4rem; }
   .hero-sub { font-size: 0.68rem; }
   .hero-desc { font-size: 0.84rem; margin-bottom: 24px; }
@@ -546,6 +563,22 @@ footer {
   .info-row .info-key { width: 76px; }
   .hero-btns { flex-direction: column; gap: 10px; }
   .btn-primary, .btn-sec { text-align: center; padding: 12px 20px; font-size: 0.68rem; }
+
+  /* Stack hero-right panels vertically on small phones */
+  .hero-right {
+    flex-direction: column;
+  }
+  .hero-panel {
+    padding: 20px 14px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-panel:last-child { border-bottom: none; }
+  .panel-label { margin-bottom: 14px; }
+
+  .stats-row { gap: 20px; }
+  .stat-n { font-size: 1.8rem; }
+  .stat-l { font-size: 0.52rem; }
 
   section { padding: 48px 14px; }
   h2 { font-size: 1.5rem; }
@@ -963,10 +996,6 @@ function runCounter(el) {
   requestAnimationFrame(tick);
 }
 
-// Stats are in the hero which is already in the viewport on page load,
-// so IntersectionObserver fires instantly during the boot screen — before
-// the user can see anything. Instead, delay until after boot finishes.
-// Boot: 400ms + 2*500ms lines + 2400ms dismiss + 700ms fade = ~3100ms total.
 setTimeout(() => {
   document.querySelectorAll('.stat-n[data-target]').forEach(el => runCounter(el));
 }, 3200);
